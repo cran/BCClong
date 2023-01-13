@@ -1,0 +1,161 @@
+---
+title: "MixedTypeData"
+author: "Zhiwen Tan"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{MixedTypeData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+`BCClong` is an R package for performing Bayesian Consensus Clustering (BCC) model for clustering continuous, discrete and categorical longitudinal data, which are commonly seen in many clinical studies. This document gives a tour of BCClong package.
+
+see `help(package = "BCClong")` for more information and references provided by `citation("BCClong")`
+
+To download **BCClong**, use the following commands:
+
+``` r
+require("devtools")
+devtools::install_github("ZhiwenT/BCClong", build_vignettes = TRUE)
+library("BCClong")
+```
+To list all functions available in this package:
+
+```r
+ls("package:BCClong")
+```
+
+## Components
+
+Currently, there are 5 function in this package which are __*BCC.multi*__, 
+__*BayesT*__, __*model.selection.criteria*__, __*traceplot*__, __*trajplot*__.
+
+__*BCC.multi*__ function performs clustering on mixed-type (continuous, discrete and
+categorical) longitudinal markers using Bayesian consensus clustering method
+with MCMC sampling and provide a summary statistics for the computed model. This function will take in a data set and multiple parameters and output a BCC model with summary statistics. 
+
+__*BayesT*__ function assess the model goodness of fit by calculate the
+discrepancy measure T(\bm{\y}, \bm{\Theta}) with following steps
+  (a) Generate T.obs based on the MCMC samples
+  (b) Generate T.rep based on the posterior distribution of the parameters
+  (c) Compare  T.obs and T.rep, and calculate the P values.
+
+__*model.selection.criteria*__ function calculates DIC and WAIC for the fitted model
+__*traceplot*__ function visualize the MCMC chain for model parameters
+__*trajplot*__ function plot the longitudinal trajectory of features by local and global clustering
+
+## Pre-process (Setting up)
+
+In this example, the `PBCseq` data in the `mixAK` package was used as it is a public data set. The variables used here include lbili, platelet, and spiders. Of these three variables, lbili and platelet are continuous variables, while spiders are categorical variables.
+
+```{r, warning=F, message=F}
+library(BCClong)
+library(mixAK)
+data(PBC910)
+```
+
+## Fit BCC Model Using BCC.multi Function
+
+Here, We used a binomial distribution for spiders marker, a gaussian distribution for the lbili marker and poisson distribution for platelet, respectively. The number of clusters was set to 2. All hyper parameters were set to default.
+
+We ran the model with 12,000 iterations, discard the first 2,000 sample, and kept every 10th sample. This resulted in 1,000 samples for each model parameter. The MCMC sampling process took about 30 minutes on an AMD Ryzen$^{TM}$ 5 5600X desktop computer.
+
+Since this program takes a long time to run, here we will use the pre-compile result in this example. The pre-compiled data file can be found here (`./inst/extdata/PBCseq.rds`)
+
+```r
+set.seed(89)
+fit.BCC2 <- BCC.multi(
+    mydat = list(PBC910$lbili,PBC910$platelet,PBC910$spiders),
+    dist = c("gaussian","poisson","binomial"),
+    id = list(PBC910$id),
+    time = list(PBC910$month),
+    formula =list(y ~ time + (1|id),y ~ time + (1|id), y ~ time + (1|id)),
+    num.cluster = 2,
+    burn.in = 100, 			  
+    thin = 10, 				    
+    per = 10, 				      
+    max.iter = 200) 
+```
+
+To run the pre-compiled result, please download the PBCseq.rds object from github under `inst/extdata/` folder. Then run the following code.
+
+```{r, warning=F, message=F}
+# pre-compiled result
+fit.BCC2 <- readRDS("../inst/extdata/PBCseq.rds")
+```
+
+## Printing Summary Statistics for key model parameters
+
+To print the summary statistics for all parameters 
+
+```r
+fit.BCC2$summary.stat
+```
+
+To print the proportion \pi for each cluster (mean, sd, 2.5% and 97.5% percentile)
+geweke statistics (geweke.stat) between -2 and 2 suggests the parameters converge
+
+```r
+fit.BCC2$summary.stat$PPI
+```
+The code below prints out all major parameters
+
+```{r, warning=F, message=F}
+print(fit.BCC2$summary.stat$PPI)
+print(fit.BCC2$summary.stat$ALPHA)
+print(fit.BCC2$cluster.global)
+print(fit.BCC2$cluster.local[[1]])
+print(fit.BCC2$cluster.local[[2]])
+print(fit.BCC2$cluster.local[[3]])
+```
+
+
+## Visualize Clusters
+
+We can use the __*traceplot*__ function to plot the MCMC process and the __*trajplot*__ function to plot the trajectory for each feature.
+```{r, warning=F, message=F, fig.height= 6, fig.width= 12, fig.align='center'}
+gp1 <- trajplot(fit=fit.BCC2,feature.ind=1,which.cluster = "local.cluster",
+			title= bquote(paste("Local Clustering (",hat(alpha)[1] ==.(round(fit.BCC2$alpha[1],2)),")")),
+			xlab="months",ylab="lbili",color=c("#00BA38", "#619CFF"))
+gp2 <- trajplot(fit=fit.BCC2,feature.ind=2,which.cluster = "local.cluster",
+			title= bquote(paste("Local Clustering (",hat(alpha)[2] ==.(round(fit.BCC2$alpha[2],2)),")")),
+			xlab="months",ylab="platelet",color=c("#00BA38", "#619CFF"))
+gp3 <- trajplot(fit=fit.BCC2,feature.ind=3,which.cluster = "local.cluster",
+			title= bquote(paste("Local Clustering (",hat(alpha)[3] ==.(round(fit.BCC2$alpha[3],2)),")")),
+			xlab="months",ylab="spiders",color=c("#00BA38", "#619CFF"))
+gp4 <- trajplot(fit=fit.BCC2,feature.ind=1,which.cluster = "global.cluster",
+			title="Global Clustering",
+			xlab="months",ylab="lbili",color=c("#00BA38", "#619CFF"))
+gp5 <- trajplot(fit=fit.BCC2,feature.ind=2,which.cluster = "global.cluster",
+			title="Global Clustering",
+			xlab="months",ylab="platelet",color=c("#00BA38", "#619CFF"))
+gp6 <- trajplot(fit=fit.BCC2,feature.ind=3,which.cluster = "global.cluster",
+			title="Global Clustering",
+			xlab="months",ylab="spiders",color=c("#00BA38", "#619CFF"))
+
+library(cowplot)
+#dev.new(width=180, height=120)
+plot_grid(gp1, gp2,gp3,gp4,gp5,gp6, 
+          labels=c("(A)", "(B)", "(C)", "(D)", "(E)", "(F)"), ncol = 3,   align = "v" )
+```
+
+## Package References
+
+[Tan, Z., Shen, C., Lu, Z. (2022) BCClong: an R package for performing Bayesian Consensus Clustering model for clustering continuous, discrete and categorical longitudinal data.](https://github.com/ZhiwenT/BCClong)
+
+```{r}
+sessionInfo()
+```
+
