@@ -1,10 +1,10 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ---- warning=F, message=F, fig.height= 5, fig.width= 8, fig.align='center', fig.cap= "Spaghtti plot for each marker"----
+## ----warning=F, message=F, fig.height= 5, fig.width= 8, fig.align='center', fig.cap= "Spaghtti plot for each marker"----
 library(BCClong)
 library(joineRML)
 library(ggplot2)
@@ -61,7 +61,7 @@ epileptic.qol$depress_scale <- scale(epileptic.qol$depress)
 epileptic.qol$aep_scale <- scale(epileptic.qol$aep)
 dat <- epileptic.qol
 
-## ---- warning=F, message=F----------------------------------------------------
+## ----warning=F, message=F-----------------------------------------------------
 fit.BCC2 <- readRDS(file = "../inst/extdata/epil1.rds")
 fit.BCC2b <- readRDS(file = "../inst/extdata/epil2.rds")
 fit.BCC2c <- readRDS(file = "../inst/extdata/epil3.rds")
@@ -73,7 +73,7 @@ fit.BCC2c$cluster.global <- factor(fit.BCC2c$cluster.global,
 	labels=c("Cluster 1","Cluster 2"))
 table(fit.BCC2$cluster.global, fit.BCC2c$cluster.global)
 
-## ---- warning=F, message=F----------------------------------------------------
+## ----warning=F, message=F-----------------------------------------------------
 print(fit.BCC2$N)
 
 print(fit.BCC2$summary.stat$PPI)
@@ -87,7 +87,7 @@ table(fit.BCC2$cluster.local[[1]])
 table(fit.BCC2$cluster.local[[2]])
 table(fit.BCC2$cluster.local[[3]])
 
-## ---- warning=F, message=F, fig.height=5, fig.width=8, fig.align='center'-----
+## ----warning=F, message=F, fig.height=5, fig.width=8, fig.align='center'------
 #=====================================================#
 # Trace-plot for key model parameters
 #=====================================================#
@@ -100,7 +100,7 @@ traceplot(fit=fit.BCC2,cluster.indx = 2, feature.indx=1,parameter="GA",ylab="GA"
 traceplot(fit=fit.BCC2,cluster.indx = 2, feature.indx=2,parameter="GA",ylab="GA",xlab="MCMC samples")
 traceplot(fit=fit.BCC2,cluster.indx = 2, feature.indx=3,parameter="GA",ylab="GA",xlab="MCMC samples")
 
-## ---- warning=F, message=F, fig.width=12, fig.height=6, fig.align='center'----
+## ----warning=F, message=F, fig.width=12, fig.height=6, fig.align='center'-----
 #=====================================================#
 # Trajectory plot for features
 #=====================================================#
@@ -135,7 +135,7 @@ plot_grid(gp1,NULL,gp2,NULL,gp3,NULL,
 		labels=c("(A)","", "(B)","","(C)","","(D)","","(E)","","(F)",""), nrow = 2,
 		align = "v", rel_widths = c(1,0.1,1,0.1,1,0.1))
 
-## ---- message=F, warning=F, fig.height=5, fig.width=7, fig.align='center'-----
+## ----message=F, warning=F, fig.height=5, fig.width=7, fig.align='center'------
 #res <- BayesT(fit=fit.BCC2)
 res <- readRDS(file = "../inst/extdata/conRes.rds")
 plot(log(res$T.obs),log(res$T.rep),xlim=c(8.45,8.7), cex=1.5,
