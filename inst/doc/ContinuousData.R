@@ -9,8 +9,6 @@ library(BCClong)
 library(joineRML)
 library(ggplot2)
 library(cowplot)
-# import data from joineRML library	(use ?epileptic.qol to see details)
-data(epileptic.qol)	
 # convert days to months
 epileptic.qol$time_month <- epileptic.qol$time/30.25 		
 # Sort by ID and time
@@ -62,9 +60,12 @@ epileptic.qol$aep_scale <- scale(epileptic.qol$aep)
 dat <- epileptic.qol
 
 ## ----warning=F, message=F-----------------------------------------------------
-fit.BCC2 <- readRDS(file = "../inst/extdata/epil1.rds")
-fit.BCC2b <- readRDS(file = "../inst/extdata/epil2.rds")
-fit.BCC2c <- readRDS(file = "../inst/extdata/epil3.rds")
+data(epil1)
+data(epil2)
+data(epil3)
+fit.BCC2 <- epil1
+fit.BCC2b <- epil2
+fit.BCC2c <- epil3
 fit.BCC2b$cluster.global <- factor(fit.BCC2b$cluster.global,
 	labels=c("Cluster 1","Cluster 2"))
 table(fit.BCC2$cluster.global, fit.BCC2b$cluster.global)
@@ -74,18 +75,7 @@ fit.BCC2c$cluster.global <- factor(fit.BCC2c$cluster.global,
 table(fit.BCC2$cluster.global, fit.BCC2c$cluster.global)
 
 ## ----warning=F, message=F-----------------------------------------------------
-print(fit.BCC2$N)
-
-print(fit.BCC2$summary.stat$PPI)
-print(fit.BCC2$summary.stat$ALPHA)
-print(fit.BCC2$summary.stat$GA)
-print(fit.BCC2$summary.stat$SIGMA.SQ.U)
-print(fit.BCC2$summary.stat$SIGMA.SQ.E)
-
-table(fit.BCC2$cluster.global)
-table(fit.BCC2$cluster.local[[1]])
-table(fit.BCC2$cluster.local[[2]])
-table(fit.BCC2$cluster.local[[3]])
+summary(fit.BCC2)
 
 ## ----warning=F, message=F, fig.height=5, fig.width=8, fig.align='center'------
 #=====================================================#
@@ -137,7 +127,8 @@ plot_grid(gp1,NULL,gp2,NULL,gp3,NULL,
 
 ## ----message=F, warning=F, fig.height=5, fig.width=7, fig.align='center'------
 #res <- BayesT(fit=fit.BCC2)
-res <- readRDS(file = "../inst/extdata/conRes.rds")
+data("conRes")
+res <- conRes
 plot(log(res$T.obs),log(res$T.rep),xlim=c(8.45,8.7), cex=1.5,
 	ylim=c(8.45,8.7),xlab="Observed T statistics (in log scale)", ylab = "Predicted T statistics (in log scale)")
 abline(0,1,lwd=2,col=2)

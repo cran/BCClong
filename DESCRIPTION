@@ -1,7 +1,7 @@
 Type: Package
 Package: BCClong
 Title: Bayesian Consensus Clustering for Multiple Longitudinal Features
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: c(
     person("Zhiwen", "Tan", , "21zt9@queensu.ca", role = c("aut", "cre")),
     person("Zihang", "Lu", , "zihang.lu@queensu.ca", role = "ctb"),
@@ -27,7 +27,8 @@ License: MIT + file LICENSE
 Depends: R (>= 3.5.0)
 Imports: cluster, coda, ggplot2, graphics, label.switching,
         LaplacesDemon, lme4, MASS, mclust, MCMCpack, mixAK, mvtnorm,
-        nnet, Rcpp (>= 1.0.9), Rmpfr, stats, truncdist, abind
+        nnet, Rcpp (>= 1.0.9), Rmpfr, stats, truncdist, abind,
+        gridExtra
 Suggests: cowplot, joineRML, knitr, rmarkdown, survival, survminer,
         testthat (>= 3.0.0)
 LinkingTo: Rcpp, RcppArmadillo
@@ -36,9 +37,9 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 NeedsCompilation: yes
-Packaged: 2024-02-04 23:55:31 UTC; whytz
+Packaged: 2024-06-23 23:47:10 UTC; whytz
 Author: Zhiwen Tan [aut, cre],
   Zihang Lu [ctb],
   Chang Shen [ctb]
 Repository: CRAN
-Date/Publication: 2024-02-05 11:50:06 UTC
+Date/Publication: 2024-06-24 00:00:02 UTC

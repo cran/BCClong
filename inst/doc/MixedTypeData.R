@@ -11,15 +11,11 @@ data(PBC910)
 
 ## ----warning=F, message=F-----------------------------------------------------
 # pre-compiled result
-fit.BCC2 <- readRDS("../inst/extdata/PBCseq.rds")
+data(PBCseqfit)
+fit.BCC2 <- PBCseqfit
 
 ## ----warning=F, message=F-----------------------------------------------------
-print(fit.BCC2$summary.stat$PPI)
-print(fit.BCC2$summary.stat$ALPHA)
-print(fit.BCC2$cluster.global)
-print(fit.BCC2$cluster.local[[1]])
-print(fit.BCC2$cluster.local[[2]])
-print(fit.BCC2$cluster.local[[3]])
+summary(fit.BCC2)
 
 ## ----warning=F, message=F, fig.height= 6, fig.width= 12, fig.align='center'----
 gp1 <- trajplot(fit=fit.BCC2,feature.ind=1,which.cluster = "local.cluster",
